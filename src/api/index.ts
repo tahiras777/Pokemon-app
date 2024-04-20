@@ -1,11 +1,12 @@
 import { BASE_API_URL } from "@/constants";
-import { Result } from "@/types";
+import { PokemonListResponse } from "@/types";
 
-export const  getPokemonList = async() :Promise<Result[]>=> {
-    const response = await fetch(BASE_API_URL + "pokemon?limit=251&offset=0");
+export const getPokemonList = async ( offset: number = 0): Promise<PokemonListResponse> => {
+    const response = await fetch(`${BASE_API_URL}pokemon?limit=20&offset=${offset}`);
     const data = await response.json();
-    return data.results;
-}
+    return data;
+};
+
 
 export async function getPokemon(name: string) {
   
