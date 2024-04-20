@@ -15,9 +15,9 @@
     --background-end-rgb: 0, 0, 0;
   }
 }
-
+/* #06144a   040818 */
 body {
- background-color: gray;
+ background-color: #06144a;
  margin: 0;
  padding: 0;
  height: 100%;
