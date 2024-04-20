@@ -1,5 +1,4 @@
 "use client";
-import Image from "next/image";
 import { getPokemonList } from "@/api";
 import { useEffect, useRef } from "react";
 import { useInfiniteQuery } from "@tanstack/react-query";
@@ -28,7 +27,7 @@ export default function Home() {
     initialPageParam: 0,
     getNextPageParam: (lastPage) => {
       if (!lastPage.next) {
-        return undefined; 
+        return undefined; // No more pages to fetch
       }
       const url = new URL(lastPage.next);
       const nextPageOffset = url.searchParams.get("offset");
@@ -52,14 +51,14 @@ export default function Home() {
     ) : (
       <>
         <PokemonGrid pokemonList={pokemonList} />
-       
-          <div className="w-full flex justify-center">
+        {isLoading && (
+          <div className=" w-full flex justify-center">
             <Spinner style={{ width: 40, height: 40 }} />
           </div>
-      
+        )}
       </>
     )}
-    <div ref={ref} style={{ width: "100%", height: "50px" }}></div>
+    <div ref={ref} className="w-full h-[50px]"></div>
   </div>
   
   );
