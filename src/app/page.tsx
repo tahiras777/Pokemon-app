@@ -5,6 +5,7 @@ import { useEffect, useRef } from "react";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { PokemonGrid } from "@/components/pokemon-grid";
 import { useIntersectionObserver } from "./hooks/useInfiniteScroll";
+import { Spinner } from "@chakra-ui/react";
 export default function Home() {
   const ref = useRef(null);
   const isBottomVisible = useIntersectionObserver(
@@ -27,7 +28,7 @@ export default function Home() {
     initialPageParam: 0,
     getNextPageParam: (lastPage) => {
       if (!lastPage.next) {
-        return undefined; // No more pages to fetch
+        return undefined; 
       }
       const url = new URL(lastPage.next);
       const nextPageOffset = url.searchParams.get("offset");
@@ -46,14 +47,20 @@ export default function Home() {
 
   return (
     <div>
-      {isLoading ? (
-        <div>Loading...</div>
-      ) : error ? (
-        <div>Error: {error.message}</div>
-      ) : (
+    {error ? (
+      <div>Error: {error.message}</div>
+    ) : (
+      <>
         <PokemonGrid pokemonList={pokemonList} />
-      )}
-      <div ref={ref} style={{ width: "100%", height: "50px" }}></div>
-    </div>
+       
+          <div className="w-full flex justify-center">
+            <Spinner style={{ width: 40, height: 40 }} />
+          </div>
+      
+      </>
+    )}
+    <div ref={ref} style={{ width: "100%", height: "50px" }}></div>
+  </div>
+  
   );
 }
