@@ -1,12 +1,28 @@
-"use client";
-
+"use client"
 import { useEffect, useRef } from "react";
 import { useInfiniteQuery } from "@tanstack/react-query";
+import styled from "styled-components"; // Import styled-components
 import { getPokemonCategoryList } from "@/api";
 import { PokemonGrid } from "@/components/pokemon-grid";
 import { useIntersectionObserver } from "./hooks/useInfiniteScroll";
 import { ErrorScreen } from "@/components/error-screen";
 import Loader from "@/components/loader";
+
+// Styled components
+const StyledWrapper = styled.div`
+  //no need for any styles here 
+`;
+
+const StyledLoaderWrapper = styled.div`
+  width: 100%;
+  display: flex;
+  justify-content: center;
+`;
+
+const StyledBottomSpacer = styled.div`
+  width: 100%;
+  height: 50px;
+`;
 
 export default function Home() {
   const ref = useRef(null);
@@ -46,24 +62,25 @@ export default function Home() {
   }, [isBottomVisible, fetchNextPage, hasNextPage]);
 
   // Extracting results from pages
-  const filteredPokemonCategories = pokemonCategories?.pages.flatMap((page) => page.results) || [];
+  const filteredPokemonCategories = pokemonCategories?.pages.flatMap(
+    (page) => page.results
+  ) || [];
 
   return (
-    <div>
-    {isError ? (
-     <ErrorScreen message={error.message}></ErrorScreen>
-    ) : (
-      <>
-        <PokemonGrid pokemonList={filteredPokemonCategories} />
-        {isLoading && (
-          <div className=" w-full flex justify-center">
-            <Loader style={{ width: 40, height: 40 }} />
-          </div>
-        )}
-      </>
-    )}
-    <div ref={ref} style={{width:'100%', height:50}}></div>
-  </div>
-
+    <StyledWrapper>
+      {isError ? (
+        <ErrorScreen message={error.message}></ErrorScreen>
+      ) : (
+        <>
+          <PokemonGrid pokemonList={filteredPokemonCategories} />
+          {isLoading && (
+            <StyledLoaderWrapper>
+              <Loader style={{ width: 40, height: 40 }} />
+            </StyledLoaderWrapper>
+          )}
+        </>
+      )}
+      <StyledBottomSpacer ref={ref}></StyledBottomSpacer>
+    </StyledWrapper>
   );
 }
