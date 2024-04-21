@@ -1,10 +1,13 @@
 "use client";
-import { getPokemonList } from "@/api";
+
 import { useEffect, useRef } from "react";
 import { useInfiniteQuery } from "@tanstack/react-query";
+import { getPokemonCategoryList } from "@/api";
 import { PokemonGrid } from "@/components/pokemon-grid";
 import { useIntersectionObserver } from "./hooks/useInfiniteScroll";
-import { Spinner } from "@chakra-ui/react";
+import { ErrorScreen } from "@/components/error-screen";
+import Loader from "@/components/loader";
+
 export default function Home() {
   const ref = useRef(null);
   const isBottomVisible = useIntersectionObserver(
@@ -17,13 +20,14 @@ export default function Home() {
 
   const {
     isLoading,
+    isError,
     error,
-    data: pageData,
+    data: pokemonCategories,
     fetchNextPage,
     hasNextPage,
   } = useInfiniteQuery({
     queryKey: ["fetch-all-pokemon"],
-    queryFn: ({ pageParam = 0 }) => getPokemonList(pageParam),
+    queryFn: ({ pageParam = 0 }) => getPokemonCategoryList(pageParam),
     initialPageParam: 0,
     getNextPageParam: (lastPage) => {
       if (!lastPage.next) {
@@ -35,31 +39,31 @@ export default function Home() {
     },
   });
 
-  // Extracting results from pages
-  const pokemonList = pageData?.pages.flatMap((page) => page.results) || [];
-
   useEffect(() => {
     if (isBottomVisible && hasNextPage) {
       fetchNextPage();
     }
   }, [isBottomVisible, fetchNextPage, hasNextPage]);
 
+  // Extracting results from pages
+  const filteredPokemonCategories = pokemonCategories?.pages.flatMap((page) => page.results) || [];
+
   return (
     <div>
-    {error ? (
-      <div>Error: {error.message}</div>
+    {isError ? (
+     <ErrorScreen message={error.message}></ErrorScreen>
     ) : (
       <>
-        <PokemonGrid pokemonList={pokemonList} />
+        <PokemonGrid pokemonList={filteredPokemonCategories} />
         {isLoading && (
           <div className=" w-full flex justify-center">
-            <Spinner style={{ width: 40, height: 40 }} />
+            <Loader style={{ width: 40, height: 40 }} />
           </div>
         )}
       </>
     )}
-    <div ref={ref} className="w-full h-[50px]"></div>
+    <div ref={ref} style={{width:'100%', height:50}}></div>
   </div>
-  
+
   );
 }
